@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hand Finger Counter - Advance UI</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            background-color: #1a1a1a;
+            font-family: 'Consolas', 'Courier New', Courier, monospace;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            color: #ffffff;
+        }
+
+        .main-container {
+            position: relative;
+            width: 85%;
+            max-width: 1000px;
+            border-radius: 8px;
+            overflow: hidden;
+            border: 1px solid #333;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+            background-color: #000;
+        }
+
+        /* --- THE SCREENSHOT SPECIFIC HEADER BANNER --- */
+        .math-banner {
+            position: absolute;
+            top: 25px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 70%;
+            background-color: #231b15;
+            border: 1px solid #3d2f25;
+            padding: 15px 25px;
+            box-sizing: border-box;
+            z-index: 10;
+        }
+
+        .equation-text {
+            font-size: 28px;
+            font-weight: bold;
+            letter-spacing: 1.5px;
+            margin: 0 0 5px 0;
+            color: #ffffff;
+        }
+
+        .mode-text {
+            font-size: 12px;
+            color: #a58e7f;
+            text-transform: uppercase;
+            margin: 0;
+            letter-spacing: 0.5px;
+        }
+
+        .video-stream {
+            width: 100%;
+            height: auto;
+            display: block;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="main-container">
+        <!-- Live Math Header Dashboard Overlay -->
+        <div class="math-banner">
+            <p class="equation-text" id="equation">R:0 + L:0 = 0</p>
+            <p class="mode-text">MODE: MULTI-COUNT (Live tracking active)</p>
+        </div>
+        
+        <!-- Camera Stream Frame -->
+        <img src="{{ url_for('video_feed') }}" class="video-stream" alt="Live Stream Feed">
+    </div>
+
+    <script>
+        // High-frequency UI listener hook to pull numerical telemetry updates without reload
+        setInterval(async () => {
+            try {
+                const response = await fetch('/stats');
+                const data = await response.json();
+                
+                // Realtime dynamic text replacement engine 
+                document.getElementById('equation').innerText = `R:${data.right} + L:${data.left} = ${data.total}`;
+            } catch (error) {
+                console.error("Tracking connection status offline:", error);
+            }
+        }, 100); // Poll every 100ms for instant reactivity
+    </script>
+
+</body>
+</html>
